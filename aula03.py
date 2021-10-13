@@ -3,18 +3,25 @@
 from scipy import stats
 import numpy as np
 rng = np.random.default_rng()
-rvs = stats.norm.rvs(loc=5, scale=10, size=(50, 2), random_state=rng)
+rvs = stats.norm.rvs(loc=5, scale=10, size=(50), random_state=rng)
 print(rvs)
 
 # Será teste se a média da amostra aleatória é igual à média verdadeira e uma média diferente.
 # Rejeitamos a hipótese nula no segundo caso e não a rejeitamos no primeiro caso.
 
-stats.ttest_1samp(rvs, 5.0)
+stats.ttest_1samp(rvs, 5.0, alternative='two-sided')
 
-stats.ttest_1samp(rvs, 0.0)
+stats.ttest_1samp(rvs, 0.0, alternative='two-sided')
+stats.ttest_1samp(rvs, 0.0, alternative='less')
+stats.ttest_1samp(rvs, 0.0, alternative='greater')
+
+stats.ttest_1samp(rvs, 10.0, alternative='two-sided')
+stats.ttest_1samp(rvs, 10.0, alternative='less')
+stats.ttest_1samp(rvs, 10.0, alternative='greater')
 
 #Exemplos usando eixo e dimensão não escalar para a média da população.
 
+rvs = stats.norm.rvs(loc=5, scale=10, size=(50, 2), random_state=rng)
 result = stats.ttest_1samp(rvs, [5.0, 0.0])
 print(result.statistic)
 print(result.pvalue)
@@ -132,14 +139,15 @@ print(pnorm)
 from scipy import stats
 rng = np.random.default_rng()
 rvs1 = stats.norm.rvs(loc=5, scale=10, size=5, random_state=rng)
-rvs2 = (rvs1
+rvs2 = (stats.norm.rvs(loc=5, scale=10, size=5, random_state=rng)
         + stats.norm.rvs(scale=0.2, size=5, random_state=rng))
+
 stats.ttest_rel(rvs1, rvs2)
 
 rvs3 = (stats.norm.rvs(loc=8, scale=10, size=500, random_state=rng)
         + stats.norm.rvs(scale=0.2, size=500, random_state=rng))
 
-stats.ttest_rel(rvs1, rvs3)
+stats.ttest_rel(rvs1, rvs3) # ValueError: unequal length arrays
 
 ##scipy.stats.wilcoxon
 
@@ -197,7 +205,12 @@ magadan = [0.1033, 0.0915, 0.0781, 0.0685, 0.0677, 0.0697, 0.0764,
 tvarminne = [0.0703, 0.1026, 0.0956, 0.0973, 0.1039, 0.1045]
 f_oneway(tillamook, newport, petersburg, magadan, tvarminne)
 
-# f_onewayaceita matrizes de entrada multidimensionais. Quando as entradas são
+# >>> f_oneway(tillamook, newport)
+# F_onewayResult(statistic=1.1485161676248705, pvalue=0.29975969106602235)
+# >>> stats.ttest_ind(tillamook, newport)
+# Ttest_indResult(statistic=1.0716884657515315, pvalue=0.2997596910660225)
+
+# f_onewaya ceita matrizes de entrada multidimensionais. Quando as entradas são
 # multidimensionais e o eixo não é fornecido, o teste é executado ao longo do primeiro
 # eixo das matrizes de entrada. Para os dados a seguir, o teste é realizado três vezes,
 # uma para cada coluna.
@@ -220,7 +233,7 @@ c = np.array([[3.31, 8.77, 1.01],
               [7.48, 8.83, 8.91],
               [8.59, 6.01, 6.07],
               [3.07, 9.72, 7.48]])
-F, p = f_oneway(a, b, c)
+F, p = f_oneway(a, b, c) #F_onewayResult(statistic=array([1.75676344, 0.03701228, 3.76439349]), pvalue=array([0.20630784, 0.96375203, 0.04733157]))
 F
 p
 
@@ -240,7 +253,7 @@ stats.kruskal(x, y, z)
 
 from scipy.stats import binomtest
 
-#Um fabricante de automóveis afirma que não mais do que 10% de seus carros são inseguros.
+# Um fabricante de automóveis afirma que não mais do que 10% de seus carros são inseguros.
 # 15 carros são inspecionados quanto à segurança, 3 foram considerados inseguros.
 # Teste a afirmação do fabricante:
 
@@ -257,3 +270,6 @@ result.proportion_estimate
 # o intervalo de confiança da estimativa:
 
 result.proportion_ci(confidence_level=0.95)
+
+# >>> binomtest(100000, n=300000, p=0.6)
+# BinomTestResult(k=100000, n=300000, alternative='two-sided', proportion_estimate=0.3333333333333333, pvalue=0.0)
