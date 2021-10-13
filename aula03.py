@@ -235,3 +235,25 @@ x = [1, 1, 1]
 y = [2, 2, 2]
 z = [2, 2]
 stats.kruskal(x, y, z)
+
+## scipy.stats.binomtest
+
+from scipy.stats import binomtest
+
+#Um fabricante de automóveis afirma que não mais do que 10% de seus carros são inseguros.
+# 15 carros são inspecionados quanto à segurança, 3 foram considerados inseguros.
+# Teste a afirmação do fabricante:
+
+result = binomtest(3, n=15, p=0.1, alternative='greater')
+result.pvalue
+
+# A hipótese nula não pode ser rejeitada ao nível de significância de 5% porque
+# o valor p retornado é maior do que o valor crítico de 5%.
+
+# A proporção estimada é simplesmente 3/15:
+result.proportion_estimate
+
+# Podemos usar o método proportion_ci() do resultado para calcular
+# o intervalo de confiança da estimativa:
+
+result.proportion_ci(confidence_level=0.95)
