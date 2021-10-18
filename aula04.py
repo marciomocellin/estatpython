@@ -5,6 +5,7 @@ import numpy as np
 
 from scipy.stats import chisquare
 chisquare([132, 98, 95, 98, 105, 133, 158])
+# Power_divergenceResult(statistic=30.017094017094017, pvalue=3.9015398080331806e-05)
 
 #Com f_exp as frequências esperadas podem ser fornecidas.
 chisquare([132, 98, 95, 98, 105, 133, 158],
@@ -30,6 +31,9 @@ obs.sum()
 
 # scipy.stats.contingency.expected_freq
 
+(m0[1]*m1[0])/obs.sum()
+(m0[0]*m1[0])/obs.sum()
+
 from scipy.stats.contingency import expected_freq
 expected_freq(obs)
 
@@ -47,7 +51,7 @@ chi2_contingency(obs)
 g, p, dof, expctd = chi2_contingency(obs, lambda_="log-likelihood")
 g, p
 
-# Um exemplo de quatro vias (2 x 2 x 2 x 2) (cubo):
+# Um exemplo de quatro vias (2 x 2 x 2 x 2):
 
 obs = np.array(
     [[[[12, 17],
@@ -75,6 +79,9 @@ power_divergence([16, 18, 16, 14, 12, 12],
                  f_exp=[16, 16, 16, 16, 16, 8],
                  lambda_='log-likelihood')
 
+#tem que ser igual
+np.array([16, 18, 16, 14, 12, 12]).sum() == np.array([16, 16, 16, 16, 16, 8]).sum()
+
 # Quando f_obs é 2-D, por padrão, o teste é aplicado a cada coluna.
 
 obs = np.array([[16, 18, 16, 14, 12, 12], [32, 24, 16, 28, 20, 24]]).T
@@ -100,7 +107,9 @@ power_divergence([16, 18, 16, 14, 12, 12],
                  axis=1)
 
 # scipy.stats.fisher_exact
-# Digamos que passemos alguns dias contando baleias e tubarões nos oceanos Atlântico e Índico. No oceano Atlântico encontramos 8 baleias e 1 tubarão, no oceano Índico 2 baleias e 5 tubarões. Então, nossa tabela de contingência é:
+# Digamos que passemos alguns dias contando baleias e tubarões nos oceanos Atlântico e Índico.
+# No oceano Atlântico encontramos 8 baleias e 1 tubarão, no oceano Índico 2 baleias e 5 tubarões.
+# Então, nossa tabela de contingência é:
 # 
 #          Atlântico  Índico
 # baleias      8         2
@@ -109,10 +118,15 @@ power_divergence([16, 18, 16, 14, 12, 12],
 
 from scipy.stats import fisher_exact
 oddsratio, pvalue = fisher_exact([[8, 2], [1, 5]])
-pvalue
+pvalue # 0.03496503496503495 ou 3,5%
 
 #A probabilidade de observarmos isso ou uma razão ainda mais desequilibrada ao acaso é
 # de cerca de 3,5%. Um nível de significância comumente usado é 5% - se o adotarmos,
 # podemos, portanto, concluir que nosso desequilíbrio observado é estatisticamente
 # significativo; as baleias preferem o Atlântico, enquanto os tubarões preferem o oceano
 # Índico.
+
+#          Atlântico  Índico
+# baleias      4         2
+# tubarões     10        5
+oddsratio, pvalue = fisher_exact([[4, 2], [10, 5]])
