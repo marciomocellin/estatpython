@@ -204,3 +204,14 @@ kurtosistest(list(range(20)), alternative='greater')
 rng = np.random.default_rng()
 s = rng.normal(0, 1, 1000)
 kurtosistest(s)
+
+# Pacote statsmodels
+
+import numpy as np
+import statsmodels.api as sm
+spector_data = sm.datasets.spector.load()
+print(spector_data.data.head())
+spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
+mod = sm.OLS(spector_data.endog, spector_data.exog)
+res = mod.fit()
+print(res.summary())
