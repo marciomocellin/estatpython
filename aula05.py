@@ -193,6 +193,19 @@ p
 
 [np.var(x, ddof=1) for x in [a, b, c]]
 
+#scipy.stats.jarque_bera
+
+from scipy import stats
+rng = np.random.default_rng()
+x = rng.normal(0, 1, 100000)
+jarque_bera_test = stats.jarque_bera(x)
+jarque_bera_test
+# Jarque_beraResult(statistic=3.3415184718131554, pvalue=0.18810419594996775)
+jarque_bera_test.statistic
+# 3.3415184718131554
+jarque_bera_test.pvalue
+# 0.18810419594996775
+
 # scipy.stats.kurtosistest
 from scipy.stats import kurtosistest
 kurtosistest(list(range(20)))
@@ -208,10 +221,24 @@ kurtosistest(s)
 # Pacote statsmodels
 
 import numpy as np
+import pandas as pd
 import statsmodels.api as sm
-spector_data = sm.datasets.spector.load()
-print(spector_data.data.head())
-spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
-mod = sm.OLS(spector_data.endog, spector_data.exog)
-res = mod.fit()
-print(res.summary())
+
+nsample = 100
+x = np.linspace(0, 10, 100)
+X = np.column_stack((x, x ** 2))
+
+print(X[0:3])
+beta = np.array([1, 0.1, 10])
+e = np.random.normal(size=nsample)
+
+X = sm.add_constant(X)
+print(X[0:3])
+y = np.dot(X, beta) + e
+
+model = sm.OLS(y, X)
+results = model.fit()
+print(results.summary())
+
+print("Parameters: ", results.params)
+print("R2: ", results.rsquared)
