@@ -55,18 +55,34 @@ glm_binom = sm.GLM(cypemethrin['mortos'], sm.add_constant(cypemethrin[['logDose'
 res = glm_binom.fit()
 print(res.summary())
 
-Quedas = pd.DataFrame({
-'Individuo' : [1, 2, 3, 4, 5],
-'Quedas' : [1, 1, 2, 0, 2],
-'Intervencao' : [1, 1, 1, 1, 1],
-'Sexo' : [0, 0, 1, 1, 0],
-'Balanco' : [45, 62, 43, 76, 51],
-'Forca' : [70, 66, 64, 48, 72]})
+
+
+# Quedas = pd.DataFrame({
+# 'Quedas' : [1, 1, 2, 0, 2],
+# 'Intervencao' : [1, 1, 1, 1, 1],
+# 'Sexo' : [0, 0, 1, 1, 0],
+# 'Balanco' : [45, 62, 43, 76, 51],
+# 'Forca' : [70, 66, 64, 48, 72]})
 
 Quedas = pd.DataFrame(np.loadtxt('https://www.ime.usp.br/~giapaula/geriatra.dat', unpack = True).T, columns = ['Quedas'
 ,'Intervencao'
 ,'Sexo'
 ,'Balanco'
-,'Forca'])
+,'Forca'],  dtype= np.int8)
+
+glm_poisson = sm.GLM(Quedas['Quedas'], sm.add_constant(Quedas[['Intervencao'
+,'Sexo'
+,'Balanco'
+,'Forca']]), family=sm.families.Poisson())
+res = glm_poisson.fit()
+print(res.summary())
+
+# Como prever
+res.predict([ 1, 1, 0, 45, 70])
+
+# a matematica continua funcionando?
+np.exp(((res.params)*[ 1, 1, 0, 45, 70]).sum())
+
+
 
 
